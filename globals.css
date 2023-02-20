@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;400;600;900&display=swap');
+
+
+body {
+    background-color: #1b232f;
+    color: white
+}
+
+div.Container {
+    min-height: calc(100vh + 20px);
+}
