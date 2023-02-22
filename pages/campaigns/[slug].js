@@ -23,8 +23,8 @@ const Campaign = ({ campaignDetails }) => {
                     <span className="top-[-6px] right-[-4px] absolute inline-flex rounded-full h-4 w-4 bg-green-300"></span>
 
                     <h4>Minimum Contribution</h4>
-                    <p className="text-sm">{campaignDetails[1]}</p>
-                    <span className="text-sm font-thin">The amount <span className="text-green-300">in Wei</span> required to become a contributor.</span>
+                    <p className="text-sm truncate">{web3.utils.fromWei(campaignDetails[1], 'ether')}</p>
+                    <span className="text-sm font-thin">The amount of <span className="text-green-300 font-normal">ETH</span> required to become a contributor.</span>
                 </div>
                 <div className="col-span-3 flex flex-col gap-1 border border-1 border-green-300 rounded-lg px-5 py-4">
                     <h4>Current balance of campaign</h4>

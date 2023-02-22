@@ -6,7 +6,7 @@ import { MdAdd, MdArrowBack, MdAddTask, MdPriceCheck } from "react-icons/md"
 import Layout from "../../../../components/Layout"
 import getCampaign from "../../../../ethereum/campaign"
 
-const RequestsIndex = ({ requests, approversCount }) => {
+const RequestsIndex = ({ requests, approversCount, requestCount }) => {
     const router = useRouter();
 
     return <Layout>
@@ -15,9 +15,16 @@ const RequestsIndex = ({ requests, approversCount }) => {
                 <MdArrowBack /> <span className="text-sm font-thin">Back to campaign details</span>
             </a>
         </Link>
-        <h2 className="text-2xl">All requests</h2>
-        <h3 className="text-green-300 font-thin">For campaign at {router.query.slug}</h3>
-        <div className="order-last sm:order-first grid grid-cols-2 gap-4 w-full my-6">
+        <div className="flex flex-col sm:flex-row gap-6 justify-between items-center">
+            <div>
+                <h2 className="text-2xl">All requests</h2>
+                <h3 className="text-green-300 font-thin truncate">For campaign at {router.query.slug}</h3>
+            </div>
+            <Link href={`/campaigns/${router.query.slug}/requests/new`}>
+                <a className="flex items-center gap-1 w-full sm:w-fit transition-all hover:bg-white/20 py-2 px-5 h-fit border-[1px] border-white bg-white/10 rounded"><MdAdd /> Create a new request</a>
+            </Link>
+        </div>
+        <div className="order-last sm:order-first grid grid-cols-1 sm:grid-cols-2 last:self-center gap-4 w-full my-6">
             {
                 requests.map((r, index) => {
                     return <RequestDetails
@@ -30,9 +37,7 @@ const RequestsIndex = ({ requests, approversCount }) => {
                 })
             }              
         </div>
-        <Link href={`/campaigns/${router.query.slug}/requests/new`}>
-            <a className="flex items-center gap-1 w-full sm:w-fit transition-all hover:bg-white/20 py-2 px-5 h-fit border-[1px] border-white bg-white/10 rounded"><MdAdd /> Create a new request</a>
-        </Link>
+        <p>Found {requestCount} requests.</p>
     </Layout>
 }
 
@@ -54,38 +59,47 @@ function RequestDetails ({ id, campaignAddress, request, approversCount}) {
         });
         Router.replace(`/campaigns/${campaignAddress}/requests`);
     }
-    
+
+    const readyToFinalize = request.approvalCount > (approversCount / 2)
+    const containerClasses = request.complete ? 'bg-white/20' : ''
+
     return ( 
     <div className="flex flex-col gap-1 border border-1 border-white rounded-b-lg">
-        <div className="flex justify-between items-center bg-white text-black px-5 py-2">
-            <h5>{ request.description }</h5>
-            <div className="flex gap-2">
-                {
-                    request.hasApproved 
-                    ? <MdAddTask aria-label="approved" className="h-6 w-6 text-purple-400" />
-                    : <button aria-label="click to approve" onClick={onApprove}>
-                            <MdAddTask className="h-6 w-6 text-gray-500" />
-                        </button>
-                }
-                {
-                    request.complete 
-                        ? <MdPriceCheck aria-label="finalized" className="h-6 w-6 text-green-500" />
-                        : <button aria-label="click to finalize (restricted)" onClick={onFinalize}>
-                            <MdPriceCheck className="h-6 w-6 text-gray-500" />
-                        </button>
-                }
-            </div>
-        </div>
-        <div className="px-5 py-4">
-            <p className="text-sm text-purple-300">{ request.complete ? 'Complete' : 'Pending approval' }</p>
-            <span className="text-sm">
-                <p className="truncate">Amount of <span className="text-green-300">ETH</span> requested: &nbsp;
+        <div className="flex justify-center text-black px-5 py-2 bg-white">
+            <h5>{ request.description }</h5>           
+        </div>  
+        <div className="px-5 py-4 flex flex-col gap-4">
+            {
+                request.complete 
+                    ? <p className="text-green-300">Complete</p>
+                    : <p className="text-gray-400">Pending finalization</p>
+            }
+           
+            <span className="text-sm flex flex-col gap-1">
+                <p className="truncate">Amount requested <span className="text-green-300 font-thin">(ETH)</span>: &nbsp;
                     <span className="font-thin truncate">
                         { request.value }
-                    </span><br/>
-                Approval count: <span className="font-thin">{ request.approvalCount ?? 0 } / {approversCount}</span></p>
+                    </span>
+                </p>
+                <p>Approval count: <span className="font-thin">{ request.approvalCount ?? 0 } / {approversCount}</span></p>
                 <p className="truncate">Recipient: <span className="font-thin">{ request.recipient }</span></p>
             </span>
+        </div>
+        <div className="flex w-full divide-x border-t border-t-white bg-white/20">
+            <button onClick={onApprove} disabled={request.approved} className="py-3 w-1/2">
+                {
+                    request.hasApproved 
+                        ? <p className="flex justify-center gap-2">Approve <MdAddTask className="h-6 w-6" /></p>
+                        : <p className="flex justify-center gap-2">Approved <MdAddTask className="h-6 w-6 text-green-500" /></p>
+                } 
+            </button>
+            <button onClick={onFinalize} disabled={readyToFinalize} className="flex justify-center gap-2 py-3 w-1/2">
+                {
+                    request.complete
+                        ? <p className="flex justify-center gap-2">Finalize <MdPriceCheck className="h-6 w-6" /></p>
+                        : <p className="flex justify-center gap-2">Finalized <MdPriceCheck className="h-6 w-6 text-green-500" /></p>
+                }
+            </button>
         </div>
     </div>         
     );

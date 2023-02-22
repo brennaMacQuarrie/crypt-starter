@@ -36,7 +36,7 @@ const ContributorForm = (props) => {
         <form onSubmit={handleContribute} className="flex flex-col gap-3">
             <h2 className="text-purple-300 font-thin">Become a <span className="font-normal">Campaign Contributor</span>!</h2>
             <div className="flex flex-col gap-2">
-                <label htmlFor="amount" className="font-light">Amount of <span className="text-green-300 font-normal">ETH</span> to contribute</label>
+                <label htmlFor="amount" className="font-light">Amount of ETH to contribute</label>
                 <input 
                     value={amount}
                     onChange={event => setAmount(event.target.value)}

@@ -47,7 +47,7 @@ const NewRequest = () => {
             </a>
         </Link>
         <h2 className="text-2xl">Create a new request</h2>
-        <h3 className="text-green-300 font-thin">For campaign at {router.query.slug}</h3>
+        <h3 className="text-green-300 font-thin truncate">For campaign at {router.query.slug}</h3>
         <form onSubmit={handleCreate} className="flex flex-col gap-3 w-2/3 my-6">
             <label htmlFor="description" className="font-light">Request description</label>
             <input 
